@@ -210,3 +210,52 @@ class TestProgress:
         d = r.json()
         assert d["discovered_words"] == []
         assert d["solved_trials"] == []
+        assert d["daily_claims"] == {}
+
+
+# ---- Daily reagent (iteration 4) ----
+class TestDaily:
+    def test_daily_shape_and_determinism(self, client):
+        r1 = client.get(f"{API}/daily", timeout=30)
+        assert r1.status_code == 200
+        d1 = r1.json()
+        assert "date" in d1 and len(d1["date"]) == 10
+        assert "reagent" in d1 and "bonus_word" in d1
+        reagent = d1["reagent"]
+        for k in ("id", "glyph", "type", "meaning"):
+            assert k in reagent, f"missing reagent field {k}"
+        bw = d1["bonus_word"]
+        for k in ("id", "word", "sequence", "definition"):
+            assert k in bw, f"missing bonus_word field {k}"
+        assert bw.get("image", "").startswith("http")
+        assert reagent["id"] in bw["sequence"], (
+            f"reagent {reagent['id']} not in bonus sequence {bw['sequence']}"
+        )
+        # deterministic within a single call session (same date)
+        r2 = client.get(f"{API}/daily", timeout=30)
+        d2 = r2.json()
+        if d1["date"] == d2["date"]:
+            assert d1["bonus_word"]["id"] == d2["bonus_word"]["id"]
+            assert d1["reagent"]["id"] == d2["reagent"]["id"]
+
+
+# ---- Daily claims persistence (iteration 4) ----
+class TestDailyClaims:
+    def test_progress_daily_claims_roundtrip(self, client):
+        sid = "RANKQA"
+        payload = {
+            "session_id": sid,
+            "discovered_words": ["autocrat"],
+            "solved_trials": [],
+            "daily_claims": {"2026-06-01": "autocrat"},
+        }
+        r = client.post(f"{API}/progress", json=payload)
+        assert r.status_code == 200
+        d = client.get(f"{API}/progress/{sid}").json()
+        assert d["daily_claims"] == {"2026-06-01": "autocrat"}
+        assert d["discovered_words"] == ["autocrat"]
+
+    def test_new_session_daily_claims_empty(self, client):
+        sid = f"TEST_new_{uuid.uuid4()}"
+        d = client.get(f"{API}/progress/{sid}").json()
+        assert d["daily_claims"] == {}

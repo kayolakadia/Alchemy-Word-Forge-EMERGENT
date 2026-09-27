@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Progress } from "./ui/progress";
 import { RANKS, getRankIndex, getRank, getNextRank } from "../game/rank";
 import { Medal, Lock, CheckCircle2 } from "lucide-react";
@@ -33,6 +33,7 @@ export const RankBadge = ({ score, open, setOpen }) => {
         <DialogContent data-testid="rank-dialog" className="brass-frame border-amber-500/40 max-w-md">
           <DialogHeader>
             <DialogTitle className="font-serif text-2xl gilded-text">Your Alchemist Rank</DialogTitle>
+            <DialogDescription className="sr-only">Your current alchemist rank and progress toward the next title.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-1 mb-2">

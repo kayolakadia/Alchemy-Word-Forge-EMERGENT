@@ -47,6 +47,11 @@ An educational word-morphology game for a precocious 7-year-old, set in a vintag
 - **Trial Rewards**: mastering all 5 trials reveals a shiny brass "Master Alchemist" badge with a spoken fanfare
 - Verified: 18/18 backend tests, 100% frontend flows (iteration 3)
 
+## Implemented (2026-09-27 — iteration 4)
+- **Alchemist Rank**: growing title (Cinder Apprentice → Journeyman → Adept → Savant → Master) from renown (words + trials + saved monsters); header badge + rank dialog with progress bar
+- **Daily Reagent**: deterministic per-day featured morpheme + bonus word on the Crucible tab; "Brew today's bonus" auto-loads reagents, transmuting it claims the reward (persisted via daily_claims)
+- Verified: 21/21 backend tests, 100% frontend flows (iteration 4)
+
 ## Backlog
 - **P1**: TTS spoken etymology narration (OpenAI TTS)
 - **P1**: AI-generated art for arbitrary monster words

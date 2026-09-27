@@ -1,0 +1,26 @@
+{
+  "summary": "Iteration 4 testing of The Alchemical Lexicon covering two new features (Alchemist Rank badge/dialog and Daily Reagent card with claim persistence) plus regression. Backend: 21/21 pytest cases pass, including 3 new tests (TestDaily.test_daily_shape_and_determinism verifies /api/daily returns {date, reagent, bonus_word} with reagent.id ∈ bonus_word.sequence and determinism within same date; TestDailyClaims.test_progress_daily_claims_roundtrip stores/reads daily_claims for session RANKQA with {2026-06-01:autocrat}; TestDailyClaims.test_new_session_daily_claims_empty confirms a brand-new session returns daily_claims=={}). Also updated test_progress_get_missing to assert daily_claims=={}. Frontend (Playwright): fresh session shows rank-title 'Cinder Apprentice'; clicking rank-badge-button opens rank-dialog with all 5 rank-row-* (apprentice/journeyman/adept/savant/master) visible; Daily Reagent card renders on Crucible tab with today's bonus word 'Amorphous' (backend-driven, not hardcoded); clicking daily-brew-button auto-loads bonus reagents, staying on Crucible tab; pressing transmute-action-button shows 'New word charted: Amorphous' + claims the daily bonus, swapping the card to daily-claimed-badge state. After full page reload the claimed state persists (backend daily_claims saved). Renown progression works: after transmuting pluto+crat, techno+crat, aristo+crat (4 total charted words) the header rank-title upgrades to 'Journeyman of Runes' as expected (threshold 4). Words-charted counter shows 4/18. Toaster + Spark vignette function normally.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Rank dialog", "issues": ["DialogContent missing aria-describedby (a11y warning in console). Non-blocking but flagged for polish."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py: `logger` is still referenced inside monster_art before its module-level definition (line ~256). Works via late binding but is a latent order-of-declaration smell (carry-over from prior iterations).",
+    "App.js runTransmute: on repeated transmute of an already-discovered bonus word, the daily claim is still correctly saved on first click but the guard `dailyClaims[daily.date] !== wid` prevents duplicate toasts — good; however saveProgress captures dailyClaims via closure (useCallback dep), so ensure sequential rapid clicks don't stale-close. Currently fine since state updates flush before next click.",
+    "DailyReagent.jsx: renders nothing when `daily` is null (correct) but there is no error state if /api/daily fails — silent absence. Consider a subtle placeholder or retry.",
+    "Frontend has no explicit test for a claim scenario where the bonus word was already in discovered_words before today (claim should still fire); manual check suggests this path works but is not covered by an automated test."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py", "/app/test_reports/iteration_4.json"],
+  "success_rate": {"backend": "100% (21/21)", "frontend": "100% of scripted iteration-4 flows"},
+  "test_credentials": "N/A — no login.",
+  "seed_data_creation": "MongoDB `progress` collection has RANKQA session with daily_claims={2026-06-01:autocrat}, plus a real user-session UUID with daily_claims for today's date (amorphous claimed). Harmless.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 4 features (Alchemist Rank + Daily Reagent) fully verified end-to-end. Today's date in this env is 2026-09-27 and the daily bonus word is 'Amorphous' (glyph MORPH, seq contains morph reagent). To force a fresh rank state during Playwright, evaluate localStorage.clear() then reload. Rank thresholds: apprentice=0 / journeyman=4 / adept=9 / savant=15 / master=22. transmute-action-button is the Spark button. daily-brew-button loads bonus_word.sequence into crucible and switches to workbench tab. Note: after transmute the SparkVignette modal opens — press Escape to dismiss before continuing further UI interactions."
+}
