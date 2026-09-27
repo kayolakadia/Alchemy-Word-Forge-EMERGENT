@@ -4,6 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import base64
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List
@@ -11,8 +12,9 @@ from datetime import datetime, timezone
 
 from lexicon_data import (
     REAGENTS, REAGENT_INDEX, CONSTELLATIONS, WORDS, RECIPE_INDEX, TRIALS,
-    VIGNETTE_IMAGES,
+    VIGNETTE_IMAGES, ROOT_JOURNEYS,
 )
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 # Attach pre-generated vignette artwork to each word (shared objects).
 for _w in WORDS:
@@ -26,6 +28,13 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 LAB_BACKGROUND = "https://static.prod-images.emergentagent.com/jobs/dd8090bc-b2b2-4f7b-9695-5e715c421e40/images/ef532027542b55be75b2e79498022bc3261892e30f6022d017f7c9dd43505463.jpeg"
+
+EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY")
+ART_STYLE = (
+    "Vintage steampunk alchemical storybook illustration, high-end animated feature film style, "
+    "painterly and richly detailed, warm candlelit brass tones with cobalt and emerald accents, "
+    "aged parchment atmosphere, whimsical and a little humorous, absolutely no text or letters anywhere. "
+)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -91,6 +100,7 @@ async def get_lexicon():
         "reagents": REAGENTS,
         "constellations": CONSTELLATIONS,
         "words": WORDS,
+        "root_journeys": ROOT_JOURNEYS,
         "background": LAB_BACKGROUND,
     }
 
@@ -125,6 +135,38 @@ async def transmute(req: TransmuteRequest):
         "status": "inert",
         "message": "The reagents refuse to bind. Every true formula needs a Core Element (gold root).",
     }
+
+
+@api_router.post("/monster-art")
+async def monster_art(req: TransmuteRequest):
+    reagents = [REAGENT_INDEX[i] for i in req.reagent_ids if i in REAGENT_INDEX]
+    if len(reagents) < 2:
+        raise HTTPException(status_code=400, detail="Need at least two reagents to conjure a creature.")
+    monster = _build_monster(reagents)
+    prompt = (
+        ART_STYLE
+        + "Scene: a single whimsical alchemical creature, freshly conjured from a bubbling copper crucible "
+        + "amid a puff of colored smoke, that literally embodies this idea: '"
+        + monster["definition"].rstrip(".")
+        + "'. Full-body, centered, charming and gently absurd, one clear creature."
+    )
+    try:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"monster-{monster['id']}",
+            system_message="You are a master alchemical illustrator.",
+        ).with_model("gemini", "gemini-3.1-flash-image-preview").with_params(modalities=["image", "text"])
+        _text, images = await chat.send_message_multimodal_response(UserMessage(text=prompt))
+        if not images:
+            raise HTTPException(status_code=502, detail="The crucible produced only smoke — no image formed.")
+        img = images[0]
+        data_url = f"data:{img['mime_type']};base64,{img['data']}"
+        return {"image": data_url, "word": monster}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"monster-art failed: {e}")
+        raise HTTPException(status_code=500, detail="The illustration reaction destabilised. Try again.")
 
 
 @api_router.get("/progress/{session_id}")

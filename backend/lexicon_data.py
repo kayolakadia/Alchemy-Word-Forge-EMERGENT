@@ -26,6 +26,40 @@ VIGNETTE_IMAGES = {
     "pseudonym": IMG + "a34396c61b763e095b7fbbfff8f651db673b02e7c6e7d8ac02ec792edb0f3e43.jpeg",
 }
 
+# Crisis outcome scenes for the "soot vents" trial
+CRISIS_IMAGES = {
+    "technocrat_win": IMG + "ed9ad363d8b7962869901f3e13e86f4e1de0122db65248efa3c0282c65dd3c65.jpeg",
+    "plutocrat_fail": IMG + "a7fb6e0cf01fd4f55bbea579a040afa536422aeb18dcec4bb132fa1517f89b15.jpeg",
+    "autocrat_fail": IMG + "69ae5e9a794c866f35806d71ae2b6cd76da5a4a28fd2090018e2b35ca270b5f4.jpeg",
+}
+
+# Root Archaeology — one root morphing across centuries into modern words
+ROOT_JOURNEYS = [
+    {
+        "id": "oikos",
+        "root": "oikos",
+        "meaning": "the household / home",
+        "intro": "One tiny ancient root — 'oikos', meaning the household — grew across the centuries into two very different modern words. Watch it transmute.",
+        "frames": [
+            {
+                "id": "oikos", "title": "οἶκος · oikos", "era": "Ancient Greece",
+                "image": IMG + "68081895b6a87997c13c024327a276ca09387972ca6de353732192fa6a2db2f3.jpeg",
+                "text": "In ancient Greece, 'oikos' meant the household — the home, its family, and everything needed to keep it running.",
+            },
+            {
+                "id": "economy", "title": "Economy", "era": "The Ledger",
+                "image": IMG + "c620bf1fccb7e0054a5d1aaeec491584e037b00f3f40149d7e2bdd108bac1d4f.jpeg",
+                "text": "'oikos' (household) + 'nomos' (managing) became ECONOMY — the careful managing of a household's, and later a whole nation's, resources.",
+            },
+            {
+                "id": "ecology", "title": "Ecology", "era": "The Living Home",
+                "image": IMG + "37081f3c9fcfb9394d68e64991209ead5b44c51255e57432a4dcb0f41b1714f5.jpeg",
+                "text": "'oikos' (household) + 'logos' (study) became ECOLOGY — the study of nature's living household and how its creatures share one home.",
+            },
+        ],
+    },
+]
+
 # ---------------------------------------------------------------------------
 # REAGENTS  (type: prefix=Catalyst/blue, root=Element/gold, suffix=Seal/green)
 # phonemes = spoken fragments the Web Speech API may return for voice matching
@@ -197,10 +231,13 @@ TRIALS = [
         "scenario": "The sky-city's atmospheric filtration conduits are clogging with volcanic soot! Three rulers step forward. Whose approach will actually clear the vents?",
         "options": [
             {"id": "o1", "label": "The Plutocrat", "sub": "offers to buy the clouds with gold", "correct": False,
+             "outcome_image": CRISIS_IMAGES["plutocrat_fail"],
              "feedback": "Gold coins clatter uselessly against the soot clouds. Wealth cannot un-clog a pipe."},
             {"id": "o2", "label": "The Autocrat", "sub": "decrees that ash is forbidden to fall", "correct": False,
+             "outcome_image": CRISIS_IMAGES["autocrat_fail"],
              "feedback": "The ash ignores the imperial decree entirely. Commands do not bend physics."},
             {"id": "o3", "label": "The Technocrat", "sub": "brings fluid-dynamic pressure & heat-exchange formulas", "correct": True,
+             "outcome_image": CRISIS_IMAGES["technocrat_win"],
              "feedback": "Steam turbines roar to life and the vents blow clear! Rule by skill ('tekhne') wins the day."},
         ],
     },

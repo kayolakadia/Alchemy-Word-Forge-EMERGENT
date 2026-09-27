@@ -5,10 +5,11 @@ import { Workbench } from "./components/Workbench";
 import { PhilosophersTree } from "./components/PhilosophersTree";
 import { Trials } from "./components/Trials";
 import { Bestiary } from "./components/Bestiary";
+import { RootArchaeology } from "./components/RootArchaeology";
 import { SparkVignette } from "./components/SparkVignette";
 import { Toaster } from "./components/ui/sonner";
 import { toast } from "sonner";
-import { FlaskConical, Stars, ScrollText, BookOpen, Beaker, Cog } from "lucide-react";
+import { FlaskConical, Stars, ScrollText, BookOpen, Beaker, Cog, History } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -24,6 +25,7 @@ function getSessionId() {
 const TABS = [
   { id: "workbench", label: "Crucible", icon: Beaker },
   { id: "tree", label: "Philosopher's Tree", icon: Stars },
+  { id: "roots", label: "Root Archaeology", icon: History },
   { id: "trials", label: "Trials", icon: ScrollText },
   { id: "bestiary", label: "Bestiary", icon: BookOpen },
 ];
@@ -270,6 +272,9 @@ function App() {
               reagentIndex={reagentIndex}
               onOpenWord={openWord}
             />
+          )}
+          {tab === "roots" && (
+            <RootArchaeology journeys={data.root_journeys} />
           )}
           {tab === "trials" && (
             <Trials trials={trials} solvedTrials={solvedTrials} onSolve={solveTrial} />

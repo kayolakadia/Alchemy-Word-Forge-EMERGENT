@@ -22,20 +22,19 @@ const TrialCard = ({ trial, solved, onSolve }) => {
       <div className="grid gap-3 sm:grid-cols-3">
         {trial.options.map((opt) => {
           const isPicked = picked?.id === opt.id;
-          const show = isPicked;
           return (
             <button
               key={opt.id}
               data-testid={`trials-option-${trial.id}-${opt.id}`}
               onClick={() => choose(opt)}
               className={`text-left rounded-xl border p-3 transition
-                ${show
+                ${isPicked
                   ? (opt.correct ? "border-emerald-400 bg-emerald-950/50" : "border-red-500/60 bg-red-950/40")
                   : "border-amber-700/30 bg-black/30 hover:border-amber-500/70 hover:bg-amber-950/30"}`}
             >
               <div className="flex items-center gap-2">
                 <span className="font-serif text-amber-100">{opt.label}</span>
-                {show && (opt.correct
+                {isPicked && (opt.correct
                   ? <CheckCircle2 size={16} className="text-emerald-400 ml-auto" />
                   : <XCircle size={16} className="text-red-400 ml-auto" />)}
               </div>
@@ -46,11 +45,29 @@ const TrialCard = ({ trial, solved, onSolve }) => {
       </div>
 
       {picked && (
-        <div className={`mt-4 rounded-lg p-3 text-sm ${picked.correct ? "bg-emerald-950/40 text-emerald-200" : "bg-red-950/30 text-red-200"}`}>
-          {picked.feedback}
-          {!picked.correct && (
-            <button onClick={() => setPicked(null)} className="ml-2 underline text-amber-300">Try again</button>
+        <div className="mt-4 space-y-3">
+          {picked.outcome_image && (
+            <div
+              key={picked.id}
+              data-testid={`trial-outcome-image-${trial.id}`}
+              className="relative rounded-xl overflow-hidden border border-amber-600/30"
+              style={{ animation: "steam-rise 0s, fade-scale 0.6s ease-out" }}
+            >
+              <img
+                src={picked.outcome_image}
+                alt={picked.label}
+                className="w-full h-52 md:h-64 object-cover"
+                style={{ animation: "kenburns 8s ease-out forwards" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
+            </div>
           )}
+          <div className={`rounded-lg p-3 text-sm ${picked.correct ? "bg-emerald-950/40 text-emerald-200" : "bg-red-950/30 text-red-200"}`}>
+            {picked.feedback}
+            {!picked.correct && (
+              <button onClick={() => setPicked(null)} className="ml-2 underline text-amber-300">Try again</button>
+            )}
+          </div>
         </div>
       )}
     </div>
