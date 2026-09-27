@@ -3,6 +3,7 @@ import axios from "axios";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Sparkles, FlaskConical, Volume2, VolumeX, Wand2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const typeClass = { prefix: "rune-prefix", root: "rune-root", suffix: "rune-suffix" };
@@ -59,6 +60,7 @@ export const SparkVignette = ({ spark, reagentIndex, onClose, onOpenTree }) => {
       setGenImage(res.data.image);
     } catch (e) {
       console.error("illustrate failed", e);
+      toast.error("The illustration reaction destabilised. Try again.");
     } finally {
       setGenLoading(false);
     }

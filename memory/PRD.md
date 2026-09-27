@@ -35,7 +35,11 @@ An educational word-morphology game for a precocious 7-year-old, set in a vintag
 - Bestiary grimoire grid with locked/unlocked entries
 - Progress persistence (localStorage session UUID + MongoDB), header counter
 - Web Speech API voice incantation (whole-word + phoneme assembly matching)
-- Verified: 11/11 backend tests, 100% frontend scripted flows
+- **Living Monster Art** — on-demand "Illustrate this creature" button generates a unique image per rogue combo via Gemini Nano Banana (`/api/monster-art`)
+- **Crisis Vignettes** — the soot-vents Trial reveals an animated outcome scene per ruler chosen (win/fail)
+- **Root Archaeology** — new tab: 'oikos' root morphs across frames into Economy & Ecology with narration
+- **Spoken Etymology** — browser speech synthesis auto-narrates each transmutation + replay/stop button
+- Verified: 15/15 backend tests, 100% frontend flows (iterations 1 & 2)
 
 ## Backlog
 - **P1**: TTS spoken etymology narration (OpenAI TTS)

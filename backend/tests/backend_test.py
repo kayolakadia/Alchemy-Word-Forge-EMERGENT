@@ -4,7 +4,7 @@ import uuid
 import pytest
 import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://word-alchemy-1.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ["REACT_APP_BACKEND_URL"].rstrip("/")
 API = f"{BASE_URL}/api"
 
 
@@ -30,6 +30,55 @@ class TestLexicon:
             assert w["definition"]
             assert w["etymology"]
             assert isinstance(w["sequence"], list) and len(w["sequence"]) >= 1
+
+
+# ---- Root Journeys (new in iteration 2) ----
+class TestRootJourneys:
+    def test_root_journeys_in_lexicon(self, client):
+        r = client.get(f"{API}/lexicon", timeout=30)
+        assert r.status_code == 200
+        data = r.json()
+        assert "root_journeys" in data
+        rj = data["root_journeys"]
+        assert isinstance(rj, list) and len(rj) >= 1
+        first = rj[0]
+        assert first["id"] == "oikos"
+        assert len(first["frames"]) == 3
+        for f in first["frames"]:
+            assert f.get("image", "").startswith("http")
+            assert f["title"]
+            assert f["era"]
+            assert f["text"]
+
+
+# ---- Trials outcome image (new in iteration 2) ----
+class TestTrialsOutcomeImage:
+    def test_t_vents_outcome_images(self, client):
+        r = client.get(f"{API}/trials", timeout=30)
+        trials = r.json()["trials"]
+        t = next(x for x in trials if x["id"] == "t-vents")
+        for o in t["options"]:
+            assert o.get("outcome_image", "").startswith("http"), f"missing outcome_image on {o['id']}"
+
+
+# ---- Monster art endpoint (new, real Gemini call, slow) ----
+class TestMonsterArt:
+    def test_monster_art_needs_two_reagents(self, client):
+        r = client.post(f"{API}/monster-art", json={"reagent_ids": ["auto"]}, timeout=30)
+        assert r.status_code == 400
+
+    def test_monster_art_generates_image(self, client):
+        r = client.post(
+            f"{API}/monster-art",
+            json={"reagent_ids": ["chron", "bio", "phobia"]},
+            timeout=120,
+        )
+        assert r.status_code == 200, r.text
+        data = r.json()
+        assert data["image"].startswith("data:image/")
+        assert ";base64," in data["image"]
+        assert data["word"]["word"] == "Chronbiophobia"
+
 
 
 # ---- Trials ----
