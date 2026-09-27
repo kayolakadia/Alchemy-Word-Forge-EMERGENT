@@ -36,6 +36,7 @@ function App() {
   const [sessionId] = useState(getSessionId);
   const [discovered, setDiscovered] = useState([]);
   const [solvedTrials, setSolvedTrials] = useState([]);
+  const [savedMonsters, setSavedMonsters] = useState([]);
   const [tab, setTab] = useState("workbench");
   const [activeConstellation, setActiveConstellation] = useState("rule-order");
   const [assembled, setAssembled] = useState([]);
@@ -52,15 +53,17 @@ function App() {
   useEffect(() => {
     async function boot() {
       try {
-        const [lex, tr, prog] = await Promise.all([
+        const [lex, tr, prog, mons] = await Promise.all([
           axios.get(`${API}/lexicon`),
           axios.get(`${API}/trials`),
           axios.get(`${API}/progress/${sessionId}`),
+          axios.get(`${API}/monsters/${sessionId}`),
         ]);
         setData(lex.data);
         setTrials(tr.data.trials);
         setDiscovered(prog.data.discovered_words || []);
         setSolvedTrials(prog.data.solved_trials || []);
+        setSavedMonsters(mons.data.monsters || []);
         document.documentElement.style.setProperty("--lab-bg", `url(${lex.data.background})`);
       } catch (e) {
         console.error("boot failed", e);
@@ -166,6 +169,27 @@ function App() {
   };
 
   const openWord = (w) => setSpark({ status: "success", word: w });
+
+  const saveMonster = useCallback(async (monster) => {
+    if (savedMonsters.some((m) => m.monster_id === monster.id)) {
+      toast("This creature is already in your grimoire.");
+      return;
+    }
+    try {
+      await axios.post(`${API}/monsters`, { session_id: sessionId, monster });
+      setSavedMonsters((prev) => [...prev, {
+        monster_id: monster.id, word: monster.word, definition: monster.definition,
+        etymology: monster.etymology, sequence: monster.sequence, image: monster.image,
+      }]);
+      toast.success(`${monster.word} charted in the Rogue Bestiary!`, { icon: "🧿" });
+    } catch (e) {
+      console.error("save monster failed", e);
+      toast.error("Couldn't save that creature. Try again.");
+    }
+  }, [savedMonsters, sessionId]);
+
+  const savedMonsterIds = savedMonsters.map((m) => m.monster_id);
+  const allTrialsSolved = trials.length > 0 && solvedTrials.length >= trials.length;
 
   const assembledReagents = assembled.map((id) => reagentIndex[id]).filter(Boolean);
 
@@ -277,13 +301,14 @@ function App() {
             <RootArchaeology journeys={data.root_journeys} />
           )}
           {tab === "trials" && (
-            <Trials trials={trials} solvedTrials={solvedTrials} onSolve={solveTrial} />
+            <Trials trials={trials} solvedTrials={solvedTrials} onSolve={solveTrial} badge={data.trial_badge} allSolved={allTrialsSolved} />
           )}
           {tab === "bestiary" && (
             <Bestiary
               constellations={data.constellations}
               words={data.words}
               discovered={discovered}
+              savedMonsters={savedMonsters}
               onOpenWord={openWord}
             />
           )}
@@ -293,6 +318,8 @@ function App() {
       <SparkVignette
         spark={spark}
         reagentIndex={reagentIndex}
+        savedMonsterIds={savedMonsterIds}
+        onSaveMonster={saveMonster}
         onClose={() => { setSpark(null); clearCrucible(); }}
         onOpenTree={() => { setSpark(null); clearCrucible(); setTab("tree"); }}
       />

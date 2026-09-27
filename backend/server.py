@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 
 from lexicon_data import (
     REAGENTS, REAGENT_INDEX, CONSTELLATIONS, WORDS, RECIPE_INDEX, TRIALS,
-    VIGNETTE_IMAGES, ROOT_JOURNEYS,
+    VIGNETTE_IMAGES, ROOT_JOURNEYS, TRIAL_BADGE,
 )
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
@@ -48,6 +48,11 @@ class ProgressPayload(BaseModel):
     session_id: str
     discovered_words: List[str] = []
     solved_trials: List[str] = []
+
+
+class MonsterPayload(BaseModel):
+    session_id: str
+    monster: dict
 
 
 def _build_monster(reagents):
@@ -101,6 +106,7 @@ async def get_lexicon():
         "constellations": CONSTELLATIONS,
         "words": WORDS,
         "root_journeys": ROOT_JOURNEYS,
+        "trial_badge": TRIAL_BADGE,
         "background": LAB_BACKGROUND,
     }
 
@@ -175,6 +181,32 @@ async def get_progress(session_id: str):
     if not doc:
         return {"session_id": session_id, "discovered_words": [], "solved_trials": []}
     return doc
+
+
+@api_router.post("/monsters")
+async def save_monster(payload: MonsterPayload):
+    m = payload.monster or {}
+    doc = {
+        "session_id": payload.session_id,
+        "monster_id": m.get("id"),
+        "word": m.get("word"),
+        "definition": m.get("definition"),
+        "etymology": m.get("etymology"),
+        "sequence": m.get("sequence", []),
+        "image": m.get("image"),
+        "saved_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.saved_monsters.update_one(
+        {"session_id": payload.session_id, "monster_id": doc["monster_id"]},
+        {"$set": doc}, upsert=True,
+    )
+    return {"ok": True}
+
+
+@api_router.get("/monsters/{session_id}")
+async def list_monsters(session_id: str):
+    docs = await db.saved_monsters.find({"session_id": session_id}, {"_id": 0}).sort("saved_at", 1).to_list(200)
+    return {"monsters": docs}
 
 
 @api_router.post("/progress")

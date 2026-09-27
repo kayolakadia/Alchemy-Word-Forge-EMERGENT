@@ -1,7 +1,7 @@
 import React from "react";
-import { Lock } from "lucide-react";
+import { Lock, Sparkles } from "lucide-react";
 
-export const Bestiary = ({ constellations, words, discovered, onOpenWord }) => {
+export const Bestiary = ({ constellations, words, discovered, savedMonsters = [], onOpenWord }) => {
   const total = words.length;
   const found = discovered.length;
 
@@ -54,6 +54,39 @@ export const Bestiary = ({ constellations, words, discovered, onOpenWord }) => {
           </div>
         );
       })}
+
+      {/* Rogue Creatures page */}
+      <div data-testid="bestiary-rogue-section">
+        <h4 className="font-serif text-lg text-emerald-200 mb-3 border-b border-emerald-700/30 pb-1 flex items-center gap-2">
+          <Sparkles size={16} /> Rogue Creatures
+          <span className="text-xs text-muted-foreground font-sans font-normal">— your saved monster words</span>
+        </h4>
+        {savedMonsters.length === 0 ? (
+          <p className="text-sm text-muted-foreground italic">
+            No rogue creatures yet. In the Crucible, invent a nonsense combo, illustrate the monster, and press
+            <span className="text-emerald-300"> Save to Bestiary</span> to keep it here forever.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {savedMonsters.map((m) => (
+              <div
+                key={m.monster_id}
+                data-testid={`bestiary-monster-${m.monster_id}`}
+                className="brass-frame rounded-xl overflow-hidden border-emerald-700/30"
+              >
+                <div className="relative h-28 md:h-32 bg-black/50">
+                  {m.image
+                    ? <img src={m.image} alt={m.word} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full flex items-center justify-center text-emerald-500"><Sparkles size={22} /></div>}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
+                  <span className="absolute bottom-2 left-2 right-2 font-serif text-sm text-emerald-50 leading-tight">{m.word}</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground p-2 line-clamp-2">{m.definition}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

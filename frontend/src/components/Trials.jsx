@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "./ui/button";
-import { CheckCircle2, XCircle, ScrollText } from "lucide-react";
+import { CheckCircle2, XCircle, ScrollText, Award } from "lucide-react";
+import { toast } from "sonner";
+
+function fanfareSpeak(text) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.95; u.pitch = 1.15;
+  window.speechSynthesis.speak(u);
+}
 
 const TrialCard = ({ trial, solved, onSolve }) => {
   const [picked, setPicked] = useState(null);
@@ -74,7 +83,18 @@ const TrialCard = ({ trial, solved, onSolve }) => {
   );
 };
 
-export const Trials = ({ trials, solvedTrials, onSolve }) => {
+export const Trials = ({ trials, solvedTrials, onSolve, badge, allSolved }) => {
+  const celebrated = useRef(false);
+
+  useEffect(() => {
+    if (allSolved && !celebrated.current) {
+      celebrated.current = true;
+      toast.success("All Trials mastered! You are a true Alchemist!", { icon: "🏅", duration: 6000 });
+      fanfareSpeak("Congratulations, Alchemist! You have mastered every trial!");
+    }
+    if (!allSolved) celebrated.current = false;
+  }, [allSolved]);
+
   return (
     <div className="space-y-5">
       <div className="text-center">
@@ -82,6 +102,34 @@ export const Trials = ({ trials, solvedTrials, onSolve }) => {
         <p className="text-sm text-muted-foreground italic">Dilemmas of fine nuance. Weigh each root's true meaning.</p>
         <p className="text-sm text-amber-300/80 font-rune mt-1">{solvedTrials.length} / {trials.length} trials mastered</p>
       </div>
+
+      {allSolved && (
+        <div
+          data-testid="trials-reward-badge"
+          className="brass-frame rounded-2xl p-6 flex flex-col md:flex-row items-center gap-5 text-center md:text-left"
+          style={{ animation: "fade-scale 0.7s ease-out" }}
+        >
+          {badge && (
+            <img
+              src={badge}
+              alt="Master Alchemist badge"
+              className="w-28 h-28 object-contain drop-shadow-[0_0_24px_rgba(212,175,55,0.6)]"
+              style={{ animation: "fade-scale 0.9s ease-out" }}
+            />
+          )}
+          <div>
+            <div className="flex items-center gap-2 justify-center md:justify-start">
+              <Award className="text-amber-400" size={18} />
+              <span className="text-[11px] uppercase tracking-widest text-amber-400/80 font-rune">Order of the Living Word</span>
+            </div>
+            <h4 className="font-serif text-2xl gilded-text">Master Alchemist</h4>
+            <p className="text-sm text-slate-200">
+              Every trial mastered! You can now read any word by its roots — the highest honour in the laboratory.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="grid gap-5">
         {trials.map((t) => (
           <TrialCard key={t.id} trial={t} solved={solvedTrials.includes(t.id)} onSolve={onSolve} />

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { Sparkles, FlaskConical, Volume2, VolumeX, Wand2, Loader2 } from "lucide-react";
+import { Sparkles, FlaskConical, Volume2, VolumeX, Wand2, Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -20,7 +20,7 @@ function stopSpeech() {
   if ("speechSynthesis" in window) window.speechSynthesis.cancel();
 }
 
-export const SparkVignette = ({ spark, reagentIndex, onClose, onOpenTree }) => {
+export const SparkVignette = ({ spark, reagentIndex, savedMonsterIds = [], onSaveMonster, onClose, onOpenTree }) => {
   const open = !!spark;
   const status = spark?.status;
   const word = spark?.word;
@@ -176,6 +176,23 @@ export const SparkVignette = ({ spark, reagentIndex, onClose, onOpenTree }) => {
                   <Button variant="outline" onClick={() => { stopSpeech(); onOpenTree(); }} className="border-amber-600/40 text-amber-200 hover:bg-amber-950/40">
                     View on the Philosopher's Tree
                   </Button>
+                )}
+                {status === "monster" && (
+                  savedMonsterIds.includes(word.id) ? (
+                    <Button disabled variant="outline" data-testid="monster-saved-badge" className="border-emerald-600/40 text-emerald-300">
+                      <Star size={16} className="mr-2" fill="currentColor" /> In your Rogue Bestiary
+                    </Button>
+                  ) : (
+                    <Button
+                      data-testid="save-monster-button"
+                      onClick={() => onSaveMonster && onSaveMonster({ ...word, image: genImage })}
+                      disabled={!genImage}
+                      title={genImage ? "Save this creature" : "Illustrate the creature first to save it"}
+                      className="bg-emerald-600 text-black hover:bg-emerald-500 disabled:opacity-50"
+                    >
+                      <Star size={16} className="mr-2" /> Save to Bestiary
+                    </Button>
+                  )
                 )}
               </div>
             </div>

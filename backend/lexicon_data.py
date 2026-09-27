@@ -33,6 +33,9 @@ CRISIS_IMAGES = {
     "autocrat_fail": IMG + "69ae5e9a794c866f35806d71ae2b6cd76da5a4a28fd2090018e2b35ca270b5f4.jpeg",
 }
 
+# Reward badge shown when all Alchemist's Trials are mastered
+TRIAL_BADGE = IMG + "4389afb8f59563d5debf8086814c6fa8e711def42c4932c396047d1b51ede0d5.jpeg"
+
 # Root Archaeology — one root morphing across centuries into modern words
 ROOT_JOURNEYS = [
     {
@@ -55,6 +58,75 @@ ROOT_JOURNEYS = [
                 "id": "ecology", "title": "Ecology", "era": "The Living Home",
                 "image": IMG + "37081f3c9fcfb9394d68e64991209ead5b44c51255e57432a4dcb0f41b1714f5.jpeg",
                 "text": "'oikos' (household) + 'logos' (study) became ECOLOGY — the study of nature's living household and how its creatures share one home.",
+            },
+        ],
+    },
+    {
+        "id": "morph",
+        "root": "morph",
+        "meaning": "form / shape",
+        "intro": "The Greek root 'morphe' means form or shape. From it flow words about changing form — and lacking it.",
+        "frames": [
+            {
+                "id": "morphe", "title": "μορφή · morphe", "era": "Ancient Greece",
+                "image": IMG + "bebeb2a5d0625295f091c502a279c8c16d57d8983a2c0b13a92a0be194bd130e.jpeg",
+                "text": "In ancient Greece, 'morphe' meant form or shape — the very outline that makes a thing what it is.",
+            },
+            {
+                "id": "metamorphosis", "title": "Metamorphosis", "era": "The Great Change",
+                "image": IMG + "dfe7deeb4e68dfeeadfe04839fcd2ff419a4c3b0feae86d5d7fab5ca49042373.jpeg",
+                "text": "'meta' (change) + 'morphe' (form) became METAMORPHOSIS — a complete change of form, like a caterpillar into a butterfly.",
+            },
+            {
+                "id": "amorphous", "title": "Amorphous", "era": "The Formless",
+                "image": IMG + "10e6cb86451f3ab9e68c8cff1e5fdae58962d2a697b697db41490c1c9841f75a.jpeg",
+                "text": "'a' (without) + 'morphe' (form) became AMORPHOUS — having no fixed shape at all.",
+            },
+        ],
+    },
+    {
+        "id": "chron",
+        "root": "chron",
+        "meaning": "time",
+        "intro": "The Greek root 'khronos' means time. It ticks quietly inside many words about when things happen.",
+        "frames": [
+            {
+                "id": "khronos", "title": "χρόνος · khronos", "era": "The Dawn of Time",
+                "image": IMG + "12a192ed725c55179e8110f6179bc92b698f326e4fb94ea19db304571e6c2ffd.jpeg",
+                "text": "'khronos' was the ancient Greek word for time itself — measured, flowing, and unstoppable.",
+            },
+            {
+                "id": "synchronous", "title": "Synchronous", "era": "Together in Time",
+                "image": IMG + "cf79c85f1406ff6d9382c2cb091ca603dea9f65e690aaf59ff3ed6322acf2c00.jpeg",
+                "text": "'syn' (together) + 'khronos' (time) became SYNCHRONOUS — happening at exactly the same moment, in perfect step.",
+            },
+            {
+                "id": "anachronism", "title": "Anachronism", "era": "Out of Time",
+                "image": IMG + "e05c7d02725bab879efc1af5c06c8f280ccb6c7080309accdbae1ea264cab868.jpeg",
+                "text": "'ana' (against) + 'khronos' (time) became ANACHRONISM — something in the wrong time, like a knight holding a phone.",
+            },
+        ],
+    },
+    {
+        "id": "graph",
+        "root": "graph",
+        "meaning": "to write / draw",
+        "intro": "The Greek root 'graphein' means to write or draw. It leaves its mark on every word about recording things.",
+        "frames": [
+            {
+                "id": "graphein", "title": "γράφειν · graphein", "era": "The First Marks",
+                "image": IMG + "39fae08d325e029c0661e7a10e5398999b1d53c1a0cf1fbb75452a2f69050ef6.jpeg",
+                "text": "'graphein' meant to scratch, write, or draw — the very first act of recording a thought.",
+            },
+            {
+                "id": "photograph", "title": "Photograph", "era": "Writing with Light",
+                "image": IMG + "2ff93a8432ba43d0c5e051d2bb0765d369645b4896080a6571a55ffd976ea68c.jpeg",
+                "text": "'phos' (light) + 'graphein' (to write) became PHOTOGRAPH — a picture written by light itself.",
+            },
+            {
+                "id": "autograph", "title": "Autograph", "era": "Writing the Self",
+                "image": IMG + "ecbcda646507bf6fa751e79d7b8964e17a8eb74fc54374b88cb715eb00f13a9d.jpeg",
+                "text": "'autos' (self) + 'graphein' (to write) became AUTOGRAPH — your own name written in your own hand.",
             },
         ],
     },
