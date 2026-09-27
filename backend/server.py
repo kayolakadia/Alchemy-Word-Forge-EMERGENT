@@ -48,6 +48,7 @@ class ProgressPayload(BaseModel):
     session_id: str
     discovered_words: List[str] = []
     solved_trials: List[str] = []
+    daily_claims: dict = {}
 
 
 class MonsterPayload(BaseModel):
@@ -116,6 +117,22 @@ async def get_trials():
     return {"trials": TRIALS}
 
 
+def _daily_selection(d):
+    ordinal = d.toordinal()
+    bonus = WORDS[ordinal % len(WORDS)]
+    seq = bonus["sequence"]
+    root_ids = [i for i in seq if REAGENT_INDEX[i]["type"] == "root"]
+    reagent_id = root_ids[0] if root_ids else seq[0]
+    return REAGENT_INDEX[reagent_id], bonus
+
+
+@api_router.get("/daily")
+async def daily():
+    today = datetime.now(timezone.utc).date()
+    reagent, bonus = _daily_selection(today)
+    return {"date": today.isoformat(), "reagent": reagent, "bonus_word": bonus}
+
+
 @api_router.post("/transmute")
 async def transmute(req: TransmuteRequest):
     ids = req.reagent_ids
@@ -179,7 +196,8 @@ async def monster_art(req: TransmuteRequest):
 async def get_progress(session_id: str):
     doc = await db.progress.find_one({"session_id": session_id}, {"_id": 0})
     if not doc:
-        return {"session_id": session_id, "discovered_words": [], "solved_trials": []}
+        return {"session_id": session_id, "discovered_words": [], "solved_trials": [], "daily_claims": {}}
+    doc.setdefault("daily_claims", {})
     return doc
 
 
@@ -215,6 +233,7 @@ async def save_progress(payload: ProgressPayload):
         "session_id": payload.session_id,
         "discovered_words": payload.discovered_words,
         "solved_trials": payload.solved_trials,
+        "daily_claims": payload.daily_claims,
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.progress.update_one(

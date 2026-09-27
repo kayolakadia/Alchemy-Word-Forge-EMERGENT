@@ -7,6 +7,8 @@ import { Trials } from "./components/Trials";
 import { Bestiary } from "./components/Bestiary";
 import { RootArchaeology } from "./components/RootArchaeology";
 import { SparkVignette } from "./components/SparkVignette";
+import { RankBadge } from "./components/RankBadge";
+import { DailyReagent } from "./components/DailyReagent";
 import { Toaster } from "./components/ui/sonner";
 import { toast } from "sonner";
 import { FlaskConical, Stars, ScrollText, BookOpen, Beaker, Cog, History } from "lucide-react";
@@ -37,6 +39,9 @@ function App() {
   const [discovered, setDiscovered] = useState([]);
   const [solvedTrials, setSolvedTrials] = useState([]);
   const [savedMonsters, setSavedMonsters] = useState([]);
+  const [daily, setDaily] = useState(null);
+  const [dailyClaims, setDailyClaims] = useState({});
+  const [rankOpen, setRankOpen] = useState(false);
   const [tab, setTab] = useState("workbench");
   const [activeConstellation, setActiveConstellation] = useState("rule-order");
   const [assembled, setAssembled] = useState([]);
@@ -53,17 +58,20 @@ function App() {
   useEffect(() => {
     async function boot() {
       try {
-        const [lex, tr, prog, mons] = await Promise.all([
+        const [lex, tr, prog, mons, day] = await Promise.all([
           axios.get(`${API}/lexicon`),
           axios.get(`${API}/trials`),
           axios.get(`${API}/progress/${sessionId}`),
           axios.get(`${API}/monsters/${sessionId}`),
+          axios.get(`${API}/daily`),
         ]);
         setData(lex.data);
         setTrials(tr.data.trials);
         setDiscovered(prog.data.discovered_words || []);
         setSolvedTrials(prog.data.solved_trials || []);
+        setDailyClaims(prog.data.daily_claims || {});
         setSavedMonsters(mons.data.monsters || []);
+        setDaily(day.data);
         document.documentElement.style.setProperty("--lab-bg", `url(${lex.data.background})`);
       } catch (e) {
         console.error("boot failed", e);
@@ -73,15 +81,16 @@ function App() {
     boot();
   }, [sessionId]);
 
-  const saveProgress = useCallback(async (words, solved) => {
+  const saveProgress = useCallback(async (words, solved, claims) => {
     try {
       await axios.post(`${API}/progress`, {
         session_id: sessionId,
         discovered_words: words,
         solved_trials: solved,
+        daily_claims: claims !== undefined ? claims : dailyClaims,
       });
     } catch (e) { console.error("save failed", e); }
-  }, [sessionId]);
+  }, [sessionId, dailyClaims]);
 
   const addReagent = (id) => setAssembled((a) => [...a, id]);
   const removeAt = (i) => setAssembled((a) => a.filter((_, idx) => idx !== i));
@@ -97,12 +106,19 @@ function App() {
       setSpark(payload);
       if (payload.status === "success") {
         const wid = payload.word.id;
+        const nextDiscovered = discovered.includes(wid) ? discovered : [...discovered, wid];
         if (!discovered.includes(wid)) {
-          const next = [...discovered, wid];
-          setDiscovered(next);
-          saveProgress(next, solvedTrials);
+          setDiscovered(nextDiscovered);
           toast.success(`New word charted: ${payload.word.word}!`, { icon: "✨" });
         }
+        // daily bonus claim
+        let nextClaims = dailyClaims;
+        if (daily && wid === daily.bonus_word.id && dailyClaims[daily.date] !== wid) {
+          nextClaims = { ...dailyClaims, [daily.date]: wid };
+          setDailyClaims(nextClaims);
+          toast.success("Daily bonus claimed! +renown", { icon: "📅" });
+        }
+        saveProgress(nextDiscovered, solvedTrials, nextClaims);
       } else if (payload.status === "monster") {
         toast("A rogue monster word emerges!", { icon: "🧪" });
       }
@@ -112,7 +128,7 @@ function App() {
     } finally {
       setBusy(false);
     }
-  }, [assembled, discovered, solvedTrials, saveProgress]);
+  }, [assembled, discovered, solvedTrials, saveProgress, daily, dailyClaims]);
 
   const handleVoice = useCallback((transcript) => {
     if (!data) return;
@@ -170,6 +186,14 @@ function App() {
 
   const openWord = (w) => setSpark({ status: "success", word: w });
 
+  const brewDaily = () => {
+    if (!daily) return;
+    setActiveConstellation(daily.bonus_word.constellation);
+    setAssembled(daily.bonus_word.sequence);
+    setTab("workbench");
+    toast("Reagents loaded — press Spark the Reaction!", { icon: "🧪" });
+  };
+
   const saveMonster = useCallback(async (monster) => {
     if (savedMonsters.some((m) => m.monster_id === monster.id)) {
       toast("This creature is already in your grimoire.");
@@ -190,6 +214,8 @@ function App() {
 
   const savedMonsterIds = savedMonsters.map((m) => m.monster_id);
   const allTrialsSolved = trials.length > 0 && solvedTrials.length >= trials.length;
+  const renown = discovered.length + solvedTrials.length + savedMonsters.length;
+  const claimedToday = !!(daily && dailyClaims[daily.date]);
 
   const assembledReagents = assembled.map((id) => reagentIndex[id]).filter(Boolean);
 
@@ -245,6 +271,7 @@ function App() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <RankBadge score={renown} open={rankOpen} setOpen={setRankOpen} />
             <div className="brass-frame rounded-full px-4 py-1.5 text-sm font-rune text-amber-200">
               {discovered.length} / {data.words.length} words charted
             </div>
@@ -274,19 +301,22 @@ function App() {
         {/* Content */}
         <main className="relative z-10 px-4 md:px-8 py-6 pb-16 max-w-6xl mx-auto w-full">
           {tab === "workbench" && (
-            <Workbench
-              constellations={data.constellations}
-              reagentIndex={reagentIndex}
-              activeId={activeConstellation}
-              setActiveId={setActiveConstellation}
-              assembledReagents={assembledReagents}
-              onAddReagent={addReagent}
-              onRemove={removeAt}
-              onClear={clearCrucible}
-              onTransmute={() => runTransmute()}
-              onVoice={handleVoice}
-              busy={busy}
-            />
+            <div className="space-y-6">
+              <DailyReagent daily={daily} claimedToday={claimedToday} onBrew={brewDaily} />
+              <Workbench
+                constellations={data.constellations}
+                reagentIndex={reagentIndex}
+                activeId={activeConstellation}
+                setActiveId={setActiveConstellation}
+                assembledReagents={assembledReagents}
+                onAddReagent={addReagent}
+                onRemove={removeAt}
+                onClear={clearCrucible}
+                onTransmute={() => runTransmute()}
+                onVoice={handleVoice}
+                busy={busy}
+              />
+            </div>
           )}
           {tab === "tree" && (
             <PhilosophersTree
