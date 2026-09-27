@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700&family=Fira+Code:wght@500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    font-family: 'Outfit', 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #0B0D12;
+}
+
+code {
+    font-family: 'Fira Code', monospace;
+}
+
+@layer base {
+    :root {
+        --background: 222 30% 6%;
+        --foreground: 40 40% 92%;
+        --card: 222 25% 11%;
+        --card-foreground: 40 40% 92%;
+        --popover: 222 25% 9%;
+        --popover-foreground: 40 40% 92%;
+        --primary: 43 74% 52%;
+        --primary-foreground: 222 40% 8%;
+        --secondary: 222 20% 16%;
+        --secondary-foreground: 40 40% 92%;
+        --muted: 222 15% 18%;
+        --muted-foreground: 40 15% 65%;
+        --accent: 43 74% 52%;
+        --accent-foreground: 222 40% 8%;
+        --destructive: 0 62% 45%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 43 30% 30%;
+        --input: 222 20% 18%;
+        --ring: 43 74% 52%;
+        --radius: 0.5rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}

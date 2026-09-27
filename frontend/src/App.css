@@ -1,0 +1,160 @@
+/* ===================== The Alchemical Lexicon — theme ===================== */
+:root {
+  --brass: #b87333;
+  --gilded: #d4af37;
+  --copper: #c86432;
+  --void: #08090c;
+  --blue-glow: rgba(59, 130, 246, 0.45);
+  --gold-glow: rgba(245, 158, 11, 0.45);
+  --green-glow: rgba(16, 185, 129, 0.45);
+}
+
+.font-serif { font-family: 'Cinzel', 'Cormorant Garamond', serif; }
+.font-rune { font-family: 'Fira Code', monospace; }
+
+.App { min-height: 100vh; }
+
+/* --- Atmospheric lab background --- */
+.lab-stage {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(184, 115, 51, 0.10), transparent 55%),
+    linear-gradient(180deg, rgba(8, 9, 12, 0.86), rgba(8, 9, 12, 0.96)),
+    var(--lab-bg) center/cover no-repeat fixed;
+}
+.lab-stage::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+/* --- Brass framing --- */
+.brass-frame {
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(212, 175, 55, 0.08);
+  background: linear-gradient(180deg, rgba(26, 32, 44, 0.85), rgba(18, 22, 32, 0.9));
+  backdrop-filter: blur(10px);
+}
+
+.gilded-text {
+  background: linear-gradient(180deg, #f6e27a, #d4af37 55%, #a97e21);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 14px rgba(212, 175, 55, 0.25);
+}
+
+/* --- Morpheme rune tiles --- */
+.rune {
+  font-family: 'Fira Code', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 10px;
+  padding: 0.5rem 0.85rem;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  position: relative;
+}
+.rune:hover { transform: translateY(-3px) scale(1.04); filter: brightness(1.12); }
+.rune:active { cursor: grabbing; transform: scale(0.97); }
+
+.rune-prefix {
+  color: #bfdbfe;
+  background: linear-gradient(160deg, rgba(30, 58, 138, 0.9), rgba(15, 23, 55, 0.95));
+  border: 1px solid rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 16px var(--blue-glow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.rune-root {
+  color: #fde68a;
+  background: linear-gradient(160deg, rgba(120, 53, 15, 0.9), rgba(60, 30, 6, 0.95));
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 16px var(--gold-glow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.rune-suffix {
+  color: #a7f3d0;
+  background: linear-gradient(160deg, rgba(6, 78, 59, 0.9), rgba(3, 40, 30, 0.95));
+  border: 1px solid rgba(16, 185, 129, 0.55);
+  box-shadow: 0 0 16px var(--green-glow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* --- Crucible / alembic --- */
+.crucible {
+  position: relative;
+  border-radius: 26px 26px 40px 40px;
+  border: 2px solid rgba(212, 175, 55, 0.4);
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(184, 115, 51, 0.22), transparent 60%),
+    linear-gradient(180deg, rgba(18, 22, 32, 0.55), rgba(10, 14, 22, 0.8));
+  box-shadow: inset 0 -30px 60px rgba(184, 115, 51, 0.15), inset 0 2px 0 rgba(255,255,255,0.05), 0 10px 40px rgba(0,0,0,0.5);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.crucible.armed {
+  border-color: rgba(212, 175, 55, 0.9);
+  box-shadow: inset 0 -30px 70px rgba(212, 175, 55, 0.35), 0 0 40px rgba(212, 175, 55, 0.3);
+}
+.crucible.dragover {
+  border-color: #d4af37;
+  transform: scale(1.015);
+  box-shadow: inset 0 -30px 80px rgba(212, 175, 55, 0.45), 0 0 50px rgba(212, 175, 55, 0.45);
+}
+
+.bubble {
+  position: absolute;
+  bottom: 8px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), rgba(212,175,55,0.15));
+  animation: rise linear infinite;
+  pointer-events: none;
+}
+@keyframes rise {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translateY(-160px) scale(1.1); opacity: 0; }
+}
+
+/* --- Steam --- */
+.steam {
+  position: absolute;
+  bottom: 60%;
+  width: 40px; height: 40px;
+  background: radial-gradient(circle, rgba(255,255,255,0.5), transparent 70%);
+  border-radius: 999px;
+  filter: blur(8px);
+  animation: steam-rise 2.4s ease-out infinite;
+}
+@keyframes steam-rise {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  30% { opacity: 0.6; }
+  100% { transform: translateY(-120px) scale(1.8); opacity: 0; }
+}
+
+/* --- Voice horn --- */
+.horn-ring { animation: horn-pulse 1.2s ease-out infinite; }
+@keyframes horn-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
+  100% { box-shadow: 0 0 0 22px rgba(212, 175, 55, 0); }
+}
+
+/* --- Gear spin --- */
+.gear-spin { animation: spin 18s linear infinite; }
+.gear-spin-rev { animation: spin 24s linear infinite reverse; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- Tree nodes --- */
+.tree-node {
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+}
+.tree-node:hover { transform: scale(1.12); filter: brightness(1.2); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: rgba(8,9,12,0.6); }
+::-webkit-scrollbar-thumb { background: rgba(184,115,51,0.5); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }

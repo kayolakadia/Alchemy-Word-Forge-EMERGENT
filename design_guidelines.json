@@ -1,0 +1,109 @@
+{
+  "project_name": "The Alchemical Lexicon — Transmutations of the Living Word",
+  "theme": "Steampunk Alchemical Laboratory / Scholarly Victorian Curiosity Shop",
+  "target_audience": "Precocious 7-Year-Old (High Reading Fluency, Pattern-Seeking, Systems Thinker)",
+  "core_educational_focus": "Morphology, Etymology, Semantic Nuance, Word Networks",
+  "design_archetype": "Organic & Earthy + Steampunk Precision + Arcane Mystery",
+  "typography": {
+    "headings": {
+      "family": "'Cinzel', 'Cormorant Garamond', 'Playfair Display', serif",
+      "google_font_import": "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700&family=Fira+Code:wght@500;700&display=swap",
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-serif text-amber-100 drop-shadow-[0_2px_10px_rgba(212,175,55,0.3)]",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-bold font-serif text-amber-200 tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold font-serif text-amber-300",
+      "h4": "text-lg sm:text-xl font-semibold text-emerald-200"
+    },
+    "morpheme_runes": {
+      "family": "'Fira Code', 'JetBrains Mono', monospace",
+      "prefix": "font-mono font-bold uppercase tracking-wider text-blue-300 bg-blue-950/80 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]",
+      "root": "font-mono font-bold uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]",
+      "suffix": "font-mono font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+    },
+    "body": {
+      "family": "'Outfit', 'DM Sans', sans-serif",
+      "text": "text-base leading-relaxed text-slate-300 font-sans"
+    }
+  },
+  "colors": {
+    "background_base": "#0B0D12",
+    "background_surface": "#121620",
+    "background_card": "#1A202C",
+    "catalyst_prefix_blue": {
+      "base": "#1E3A8A",
+      "light": "#3B82F6",
+      "glow": "rgba(59, 130, 246, 0.4)",
+      "border": "#2563EB"
+    },
+    "element_root_gold": {
+      "base": "#78350F",
+      "light": "#F59E0B",
+      "glow": "rgba(245, 158, 11, 0.4)",
+      "border": "#D97706"
+    },
+    "seal_suffix_green": {
+      "base": "#064E3B",
+      "light": "#10B981",
+      "glow": "rgba(16, 185, 129, 0.4)",
+      "border": "#059669"
+    },
+    "brass_accent": "#B87333",
+    "gilded_gold": "#D4AF37",
+    "alchemical_copper": "#C86432",
+    "void_black": "#08090C"
+  },
+  "layout_and_structure": {
+    "viewports": "Desktop-first optimized experience with full responsive fallbacks for tablets and mobile devices.",
+    "alchemists_workbench": {
+      "container": "relative w-full min-h-screen bg-[#0B0D12] text-slate-100 overflow-hidden flex flex-col justify-between p-4 md:p-8",
+      "reagent_drawers": "wooden carved panel with brass filigree edges, hosting draggable morpheme runic tiles.",
+      "alembic_crucible": "central glass flask with liquid particle effects, animated bubbles, magnetic snapping zone for tiles, and glowing brass rim.",
+      "brass_microphone_horn": "Web Speech API voice incantation button rendered as an interactive victorian brass horn with acoustic audio wave animations."
+    },
+    "philosophers_tree": "Radial constellation map using SVG and HTML5 Canvas, rendered with glowing star nodes, connecting golden energy beams, and clickable word family branches.",
+    "grand_alchemical_bestiary": "Illustrated grimoire modal with leather texture frame, ribbon bookmarks, dual page spreads, and word collection badges."
+  },
+  "visual_enhancers": {
+    "steampunk_elements": [
+      "Kinetic brass gear rotation backgrounds",
+      "Boiling particle alembic bubbling effects",
+      "Glowing runic etchings on morpheme tiles",
+      "Gilded copper borders with corner filigrees",
+      "Steam exhaust animations upon successful transmutation",
+      "Acoustic brass horn microphone glow ring"
+    ],
+    "glassmorphism": "backdrop-blur-md bg-[#121620]/80 border border-[#D4AF37]/30 shadow-[0_8px_32px_rgba(0,0,0,0.6)]"
+  },
+  "image_urls": {
+    "grimoire_books": [
+      "https://images.unsplash.com/photo-1643155316873-3df3036bcab0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwzfHx2aW50YWdlJTIwZ3JpbW9pcmUlMjBib29rfGVufDB8fHx8MTc5MDUwOTI3NHww&ixlib=rb-4.1.0&q=85",
+      "https://images.unsplash.com/photo-1534289855405-ab820a118fc1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwxfHx2aW50YWdlJTIwZ3JpbW9pcmUlMjBib29rfGVufDB8fHx8MTc5MDUwOTI3NHww&ixlib=rb-4.1.0&q=85"
+    ],
+    "constellation_maps": [
+      "https://images.unsplash.com/photo-1737317311908-b3cb0adb9a10?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwyfHxjb25zdGVsbGF0aW9uJTIwbWFwJTIwc3RhcnN8ZW58MHx8fHwxNzkwNTA5Mjc0fDA&ixlib=rb-4.1.0&q=85",
+      "https://images.unsplash.com/photo-1737317313282-02b0d8dddb7d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwzfHxjb25zdGVsbGF0aW9uJTIwbWFwJTIwc3RhcnN8ZW58MHx8fHwxNzkwNTA5Mjc0fDA&ixlib=rb-4.1.0&q=85"
+    ],
+    "laboratory_gear": [
+      "https://images.unsplash.com/photo-1786826706398-9d27f74f5da6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxzdGVhbXB1bmslMjBsYWJvcmF0b3J5fGVufDB8fHx8MTc5MDUwOTI3NHww&ixlib=rb-4.1.0&q=85",
+      "https://images.unsplash.com/photo-1775264047186-0d8a5f97ef6f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHxzdGVhbXB1bmslMjBsYWJvcmF0b3J5fGVufDB8fHx8MTc5MDUwOTI3NHww&ixlib=rb-4.1.0&q=85"
+    ]
+  },
+  "testing_and_accessibility": {
+    "data_testid_convention": "kebab-case, role-based, explicit. Mandatory for all draggable tiles, crucible dropzone, voice microphone button, navigation tabs, trial answer cards, and grimoire pages.",
+    "examples": [
+      "data-testid=\"morpheme-tile-autocracy-auto\"",
+      "data-testid=\"alembic-crucible-dropzone\"",
+      "data-testid=\"voice-incantation-button\"",
+      "data-testid=\"transmute-action-button\"",
+      "data-testid=\"philosophers-tree-node-autocracy\"",
+      "data-testid=\"bestiary-grimoire-tab\"",
+      "data-testid=\"trials-option-button-1\""
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Use Javascript (.js / .jsx) components only, not TypeScript (.tsx).",
+    "Build a immersive single-page alchemical laboratory app with tab views or modal overlays for Crucible Workbench, Philosopher's Tree (3 constellations: Rule & Order, Light & Vision, Form & Change), Alchemist's Trials, and Grand Bestiary Grimoire.",
+    "Implement Morpheme Tile drag and drop using HTML5 Drag & Drop or Framer Motion with magnetic drop-zone feedback into the Alembic Flask.",
+    "Integrate Web Speech API (SpeechRecognition) for the Brass Horn Voice Incantation button with simulated fallback if voice is unsupported or denied.",
+    "Ensure high visual contrast and scholarly tone; treat the child player as a serious young inventor/alchemist."
+  ]
+}
