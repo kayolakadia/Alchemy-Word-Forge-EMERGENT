@@ -41,6 +41,12 @@ An educational word-morphology game for a precocious 7-year-old, set in a vintag
 - **Spoken Etymology** — browser speech synthesis auto-narrates each transmutation + replay/stop button
 - Verified: 15/15 backend tests, 100% frontend flows (iterations 1 & 2)
 
+## Implemented (2026-09-27 — iteration 3)
+- **Monster Bestiary**: illustrated rogue monster words can be saved to a "Rogue Creatures" page in the grimoire (`/api/monsters` save/list), persisted per session
+- **More Root Journeys**: Root Archaeology now covers 4 roots — oikos, morph, chron, graph — each a 3-frame time-travel trail
+- **Trial Rewards**: mastering all 5 trials reveals a shiny brass "Master Alchemist" badge with a spoken fanfare
+- Verified: 18/18 backend tests, 100% frontend flows (iteration 3)
+
 ## Backlog
 - **P1**: TTS spoken etymology narration (OpenAI TTS)
 - **P1**: AI-generated art for arbitrary monster words

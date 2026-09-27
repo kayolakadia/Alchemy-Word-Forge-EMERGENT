@@ -32,7 +32,7 @@ class TestLexicon:
             assert isinstance(w["sequence"], list) and len(w["sequence"]) >= 1
 
 
-# ---- Root Journeys (new in iteration 2) ----
+# ---- Root Journeys (iteration 3 expands to 4) ----
 class TestRootJourneys:
     def test_root_journeys_in_lexicon(self, client):
         r = client.get(f"{API}/lexicon", timeout=30)
@@ -40,15 +40,65 @@ class TestRootJourneys:
         data = r.json()
         assert "root_journeys" in data
         rj = data["root_journeys"]
-        assert isinstance(rj, list) and len(rj) >= 1
-        first = rj[0]
-        assert first["id"] == "oikos"
-        assert len(first["frames"]) == 3
-        for f in first["frames"]:
-            assert f.get("image", "").startswith("http")
-            assert f["title"]
-            assert f["era"]
-            assert f["text"]
+        ids = [j["id"] for j in rj]
+        assert ids == ["oikos", "morph", "chron", "graph"], ids
+        for j in rj:
+            assert len(j["frames"]) == 3
+            for f in j["frames"]:
+                assert f.get("image", "").startswith("http")
+                assert f["id"] and f["title"] and f["era"] and f["text"]
+
+    def test_trial_badge_present(self, client):
+        r = client.get(f"{API}/lexicon", timeout=30)
+        data = r.json()
+        assert "trial_badge" in data
+        assert isinstance(data["trial_badge"], str)
+        assert data["trial_badge"].startswith("http")
+
+
+# ---- Monster save/list (iteration 3) ----
+class TestMonstersPersistence:
+    def test_save_and_list_monster(self, client):
+        sid = "QA_SESS_1"
+        payload = {
+            "session_id": sid,
+            "monster": {
+                "id": "monster-qa",
+                "word": "Qatest",
+                "definition": "d",
+                "etymology": "e",
+                "sequence": ["chron", "morph"],
+                "image": "data:image/png;base64,AAAA",
+            },
+        }
+        r = client.post(f"{API}/monsters", json=payload, timeout=30)
+        assert r.status_code == 200
+        assert r.json().get("ok") is True
+
+        r2 = client.get(f"{API}/monsters/{sid}", timeout=30)
+        assert r2.status_code == 200
+        arr = r2.json()["monsters"]
+        assert any(m.get("word") == "Qatest" and m.get("monster_id") == "monster-qa" for m in arr)
+
+    def test_save_monster_upsert_no_dup(self, client):
+        sid = "QA_SESS_1"
+        payload = {
+            "session_id": sid,
+            "monster": {
+                "id": "monster-qa",
+                "word": "QatestUpdated",
+                "definition": "d2",
+                "etymology": "e2",
+                "sequence": ["chron", "morph"],
+                "image": "data:image/png;base64,BBBB",
+            },
+        }
+        r = client.post(f"{API}/monsters", json=payload, timeout=30)
+        assert r.status_code == 200
+        arr = client.get(f"{API}/monsters/{sid}").json()["monsters"]
+        matches = [m for m in arr if m.get("monster_id") == "monster-qa"]
+        assert len(matches) == 1, f"expected upsert, got {len(matches)} copies"
+        assert matches[0]["word"] == "QatestUpdated"
 
 
 # ---- Trials outcome image (new in iteration 2) ----
