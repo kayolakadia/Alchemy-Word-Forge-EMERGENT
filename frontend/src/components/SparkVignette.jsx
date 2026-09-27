@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogContent } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Sparkles, FlaskConical } from "lucide-react";
 
@@ -18,6 +18,8 @@ export const SparkVignette = ({ spark, reagentIndex, onClose, onOpenTree }) => {
         data-testid="spark-vignette-modal"
         className="max-w-2xl brass-frame border-amber-500/40 p-0 overflow-hidden max-h-[90vh] overflow-y-auto"
       >
+        <DialogTitle className="sr-only">{word ? word.word : "Transmutation result"}</DialogTitle>
+        <DialogDescription className="sr-only">{word ? word.definition : (spark?.message || "")}</DialogDescription>
         {status === "inert" && (
           <div className="p-8 text-center">
             <FlaskConical className="mx-auto text-amber-400 mb-3" size={40} />
